@@ -1,0 +1,36 @@
+create sequence film_id_seq start with 1 increment by 50;
+
+create table film
+(
+    id                    bigint        not null,
+    title                 varchar(255)  not null,
+    genre                 varchar(255)  not null,
+    tags                  text          not null,
+    languages             varchar(255)  not null,
+    type                  varchar(255)  not null,
+    score                 numeric(2, 1) not null,
+    country_availability  text          not null,
+    runtime               varchar(255)  not null,
+    director              varchar(255),
+    writer                varchar(500),
+    actors                text,
+    view_rating           varchar(255),
+    imdb_score            numeric(2, 1),
+    rotten_tomatoes_score int,
+    metacritic_score      int,
+    awards_received       int,
+    awards_nominated_for  int,
+    boxoffice             varchar(255),
+    release_date          date,
+    netflix_release_date  date,
+    production_house      varchar(500),
+    netflix_link          varchar(255)  not null,
+    imdb_link             varchar(255),
+    summary               text          not null,
+    imdb_votes            int,
+    image                 varchar(500),
+    poster                varchar(255),
+    tmdb_trailer          varchar(255),
+    trailer_site          varchar(255),
+    primary key (id)
+);
