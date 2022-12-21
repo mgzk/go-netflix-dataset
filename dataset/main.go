@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-the-way/exl"
 	_ "github.com/lib/pq"
+	"os"
 	"strconv"
 	"time"
 )
@@ -48,9 +49,7 @@ const insertQuery = "insert into film (id, title, genre, tags, languages, type, 
 
 const selectQuery = "select id, title from film"
 
-const datasource = "postgres://netflix:netflix@localhost:5432/netflix"
-
-const datasetPath = "./dataset/Netflix Dataset Latest 2021.xlsx"
+const datasetPath = "./dataset/Netflix-Dataset-2021.xlsx"
 
 const dateLayout = "2006-01-02"
 
@@ -62,7 +61,7 @@ type DatabaseRow struct {
 func (*DatasetModel) ConfigureRM(*exl.ReadMetadata) {}
 
 func main() {
-	db, err := sql.Open("postgres", datasource)
+	db, err := sql.Open("postgres", os.Args[1])
 
 	if err != nil {
 		fmt.Printf(err.Error())
@@ -73,8 +72,6 @@ func main() {
 	for _, model := range models {
 		insert(model, db)
 	}
-
-	selectAll(db)
 }
 
 func insert(model *DatasetModel, db *sql.DB) {
@@ -88,7 +85,7 @@ func insert(model *DatasetModel, db *sql.DB) {
 		model.TrailerSite)
 
 	if err != nil {
-		fmt.Printf("Title: %s, Error: %s", model.Title, err.Error())
+		fmt.Printf("Title: %s, Error: %s \n", model.Title, err.Error())
 	}
 }
 
@@ -106,23 +103,6 @@ func convertDate(excelDate string) *string {
 	date := time.Date(1900, 1, 0, 0, 0, 0, 0, time.UTC).AddDate(0, 0, dateInt-1).Format(dateLayout)
 
 	return &date
-}
-
-func selectAll(db *sql.DB) {
-	rows, err := db.Query(selectQuery)
-
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
-
-	for rows.Next() {
-		var databaseRow DatabaseRow
-		if err := rows.Scan(&databaseRow.ID, &databaseRow.Title); err != nil {
-			fmt.Print(err.Error())
-		}
-
-		fmt.Println(fmt.Sprintf("id: %d, title: %s", databaseRow.ID, databaseRow.Title))
-	}
 }
 
 func read(path string) []*DatasetModel {
